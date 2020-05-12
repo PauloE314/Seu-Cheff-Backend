@@ -2,6 +2,8 @@ from django.core.exceptions import FieldDoesNotExist
 import json
 from collections import Iterable
 from django.db.models.fields import related
+import os
+
 
 RELATED_CLASSES = [related.ForeignKey, related.OneToOneField, related.ManyToManyField]
 
@@ -26,3 +28,25 @@ def check_related(model, field_name):
         for field_class in RELATED_CLASSES:
             if isinstance(db_field, field_class):
                 return True
+
+
+#IMAGE
+
+
+# @receiver(pre_delete, sender=Profile)
+def delete_file(instance=None, file_name=None, **kwargs):
+    file = getattr(instance, file_name) if file_name else instance.image
+
+    if file:
+        try:
+            os.remove(file.path)
+        except FileNotFoundError:
+            return False
+
+
+def exist(instance=None, model=None):
+    try:
+        model.objects.get(pk=instance.pk)
+        return True
+    except model.DoesNotExist:
+        return False

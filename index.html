@@ -6,28 +6,49 @@
     <title>Testes</title>
 </head>
 <body>
+
+    <input type="file" id="image"><br>
+    <button id="sub" type="button">Enviar</button>
     
     <script>
         const token = "e0fdb57d9a13bbe36de1f4032b1ed9819f570bdb";
-        fetch("http://127.0.0.1:8000/users/self/", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Token " + token
-            },
-            body: JSON.stringify({
-                authorization: {
-                    username: "UpdateTeste",
-                    password: "senha1552"
+        const token_2 = "7e2260c14219f94b3e2b304f5ca3ff4120cfc854";
+
+        document.getElementById('sub').onclick = () => {
+            const fd = new FormData();
+            const image = document.getElementById('image').files[0];
+            fd.append('image', image);
+
+            fetch("http://127.0.0.1:8000/recipes/self/favorite/1", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Token " + token
                 },
-                new_data: {
-                    password: "senha"
-                }
+
+
+                // method: "POST",
+                // headers: {
+                //     "Content-Type": "application/json",
+                //     "Authorization": "Token " + token_2
+                // },
+
+                // body: JSON.stringify({
+                //     name: "Feijoada 2",
+                //     preparation_time: 20,
+                //     food_yield: 5,
+                //     ingredients: ["Feijão", "Linguiça", "literalmente qualquer coisa"],
+                //     steps: ["Cozinha o feijão", "cabou"],
+                //     additional_information: "É muito bom, namoral",
+                //     food_type: "BRA",
+                // })
+
+            
             })
-        })
-            .then(resp => resp.json())
-            .then(resp => console.log(resp))
-            .catch(error => console.log(error.message))
+                .then(resp => resp.json())
+                .then(resp => console.log(resp))
+                .catch(error => console.log(error.message))
+        }
 
         
     </script>

@@ -2,52 +2,60 @@ from extension.models_methods import check_field, check_related
 from rest_framework import generics, status, mixins
 from django.core.exceptions import FieldError
 from collections import Iterable
+from rest_framework.permissions import IsAuthenticated
 
 class SearchListAPIView(generics.ListAPIView):
+    # permission_classes = [IsAuthenticated]
+    user_relation = None
+
     searching_fields = []
     searching_models = []
-    order_by = []
-
-    def final_ordination(self, filtered_queryset, *args, **kwargs):
-        return filtered_queryset        
+    order_by = ['-pk']
 
     def get_queryset(self, *args, **kwargs):
-        return self.search_and_ordinate(
-            self.queryset.all(),
-            self.request.query_params,
-            *args, **kwargs
+        if self.user_relation:
+            queryset = getattr(self.request.user, self.user_relation).all()
+            
+        else:
+            queryset = self.queryset.all()
+
+        
+        searched_queryset = self.search(
+            *args,
+            initial_queryset=queryset,
+            query_params=self.request.query_params,
+            **kwargs
         )
+        print(searched_queryset)
 
-    def search_and_ordinate(self, initial_queryset, query_params, *args, **kwargs):
+        ordinated_queryset = self.ordinate(searched_queryset, *args, **kwargs)
+
+        return ordinated_queryset
+
+
+
+    def search(self, *args, initial_queryset=None, query_params=None, **kwargs):
         queryset = initial_queryset
-        order_by = list()
-
         for related_name, model in self.searching_models:
-            queryset = self.search(
+            queryset = self.search_field(
                 fields=self.searching_fields,
                 model=model,
                 query_params=query_params,
                 initial_queryset=queryset,
                 relational_name=related_name
             )
+    
         
-        for order in self.order_by:
-            name = order
-            if order[0] == '-':
-                name = order[1:]
-            
-            if check_field(model, name):
-                order_by.append(order)
-        
-        queryset = queryset.order_by(*order_by)
-        
-        return self.final_ordination(queryset, self.request, initial_queryset, query_params, *args, **kwargs)
+        return queryset
+
+    def ordinate(self, queryset, *args, **kwargs):
+        return queryset.order_by(*self.order_by)
 
 
-    def search(self, fields=None, model=None, query_params=None, initial_queryset=None, relational_name=None):
+    def search_field(self, fields=None, model=None, query_params=None, initial_queryset=None, relational_name=None):
         request_filters = query_params
         filters = {}
-        if not initial_queryset:
+        if initial_queryset == None:
             initial_queryset = model.objects.all()
         
 
@@ -74,6 +82,7 @@ class SearchListCreateAPIView(generics.CreateAPIView, SearchListAPIView):
 
 
 class SelfAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
     user_relation = None
 
     def get_object(self, *args, **kwargs):
@@ -99,7 +108,7 @@ class SelfUpdateAPIView(SelfAPIView, generics.UpdateAPIView):
 
     def put(self, *args, **kwargs):
         if self.always_partial:
-            return super().partial_update(*args, **kwargs)
+            return self.partial_update(*args, **kwargs)
         return super().put(*args, **kwargs)
 
 class SelfDestroyAPIView(SelfAPIView, generics.DestroyAPIView):
