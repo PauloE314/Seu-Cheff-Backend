@@ -25,7 +25,7 @@ class Recipe(models.Model):
     steps = ArrayField(
         models.TextField()
     )
-    additional_information = models.TextField()
+    additional_information = models.TextField(blank=True)
     food_type = models.CharField(choices=config.FOOD_TYPES, max_length=5, blank=True)
 
     favorited = models.ManyToManyField(User, related_name='favorites', blank=True)

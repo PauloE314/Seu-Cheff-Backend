@@ -9,6 +9,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         exclude = ['favorited',]
         read_only_fields = ('image', )
+        extra_kwargs = {
+            'food_type': {"required":True}
+        }
 
     favorites = serializers.IntegerField(read_only=True)
 
