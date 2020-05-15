@@ -12,19 +12,34 @@ Login de usuário padrão que retorna um token.
 
 ```json
 {
-    "username": "Example"
+    "username": "Example",
     "password": "password_example"
 }
 
 ```
 <hr>
 
-### Path: "/users/" - GET
+### Path: "/users/" - GET, POST
 #### (autenticação não necessária)
+
+#### GET:
 
 Retorna lista de usuários. Permite pesquisa através de query_params.
 
 ```json
+
+```
+
+#### POST:
+
+Cria um novo usuário. Por padrão, ele estará desativado e será necessário utilizar um token enviado para o email informado aqui.
+
+```json
+{
+    "username": "Example",
+    "password": "example_password",
+    "email": "example@gmail.com"
+}
 
 ```
 
@@ -80,5 +95,19 @@ Deleta o usuário. Também requer o envio das credenciais.
        "username": "Example",
        "password": "Example_password"
     }
+}
+```
+<hr>
+
+### Path: "/users/active-account" - POST
+#### (autenticação não necessária)
+
+#### POST:
+
+Ativa a conta através do token enviado por email.
+
+```json
+{
+    "activation_token": "HSHDUJE89D"
 }
 ```
