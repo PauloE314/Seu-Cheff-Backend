@@ -9,10 +9,10 @@ from django.contrib.auth.models import User
 
 
 #TODAS AS RECEITAS
-class Receipes(class_views.SearchListAPIView):
+class Receipes(class_views.SearchListCreateAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    searching_fields = ["name", "food_type", "author"]
+    searching_fields = ["title", "food_type", "author"]
     searching_models = [("", Recipe)]
 
 
@@ -23,11 +23,12 @@ class DetailReceipes(generics.RetrieveAPIView):
 
 
 #SUAS RECEITAS
-class SelfRecipes(class_views.SearchListAPIView):
+class SelfRecipes(class_views.SearchListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     user_relation = 'recipes'
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    searching_fields = ["name", "food_type"]
+    searching_fields = ["title", "food_type"]
     searching_models = [("", Recipe)]
 
     def create(self, request, *args, **kwargs):
@@ -63,6 +64,8 @@ class DetailSelfRecipes(class_views.SelfRetrieveUpdateDestroyAPIView):
 
 #MUDAR A IMAGEM DA SUA RECEITA
 class SetRecipeImage(class_views.SelfRetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
     user_relation = 'recipes'
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
@@ -86,13 +89,6 @@ class SetRecipeImage(class_views.SelfRetrieveUpdateDestroyAPIView):
         recipe.save()
         return Response(RecipeSerializer(recipe).data)
 
-
-class SelfFavorites(class_views.SearchListAPIView):
-    user_relation = 'favorites'
-    queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
-    searching_fields = ["name", "food_type"]
-    searching_models = [("", Recipe)]
 
 
 class FavoriteRecipe(generics.GenericAPIView):

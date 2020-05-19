@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from users.models import ActivationToken
 from users.serializers import UserSerializer
 from extension import class_views, permissions, models_methods
+from recipes.serializers import UserRecipeSerializer, RecipeSerializer
+from recipes.models import Recipe
 
 
 class Test(APIView):
@@ -24,7 +26,7 @@ class Users(class_views.SearchListCreateAPIView):
 
 class DetailUser(generics.RetrieveAPIView):
     queryset = User.objects.filter(is_active=True)
-    serializer_class = UserSerializer
+    serializer_class = UserRecipeSerializer
 
 class SelfUser(class_views.SelfRetrieveUpdateDestroyAPIView):
     permission_classes = [(permissions.GetOnly | permissions.CheckAuth) & IsAuthenticated]
@@ -50,6 +52,40 @@ class SelfUser(class_views.SelfRetrieveUpdateDestroyAPIView):
             return Response({**serializer.data, **password_changed})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SetUserImage(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request, *args, **kwargs):
+        image = request.FILES.get('image')
+
+        if image:
+            user_image = self.request.user.image
+            user_image.image = image
+            user_image.save()
+
+            return Response(UserSerializer(self.request.user).data)
+
+        else:
+            return Response({'message': 'Envie uma imagem'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        user_image = self.request.user.image
+        if user_image.image:
+            user_image.image = None
+            user_image.save()
+        
+        return Response(UserSerializer(self.request.user).data)
+# 
+
+class SelfFavorites(class_views.SearchListAPIView):
+    permission_classes = [IsAuthenticated]
+    user_relation = 'favorites'
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+    searching_fields = ["name", "food_type"]
+    searching_models = [("", Recipe)]
 
             
 

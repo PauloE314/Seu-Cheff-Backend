@@ -41,7 +41,7 @@ def handle_update_recipe(sender, instance=None, **kwargs):
     if exist(instance=instance, model=sender):
         old_recipe = Recipe.objects.get(pk=instance.pk)
 
-        delete_file(instance=instance, file_name="image")
+        delete_file(instance=old_recipe, file_name="image")
 
 
 # @receiver(pre_delete, sender=Recipe)

@@ -8,5 +8,7 @@ urlpatterns = [
     path('', views.Users.as_view()),
     path('<int:pk>', views.DetailUser.as_view()),
     path('self/', views.SelfUser.as_view()),
+    path('self/image/', views.SetUserImage.as_view()),
+    path('self/favorites/', views.SelfFavorites.as_view()),
     path('active-account/', views.ActiveAccount.as_view())
 ]

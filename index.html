@@ -19,12 +19,13 @@
             const image = document.getElementById('image').files[0];
             fd.append('image', image);
 
-            fetch("http://127.0.0.1:8000/recipes/self/favorite/1", {
-                method: "POST",
+            fetch("http://127.0.0.1:8000/users/self/image/", {
+                method: "DELETE",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Token " + token
+                    // "Content-Type": "application/json",
+                    "Authorization": "Token " + token_2
                 },
+                // body: fd
 
 
                 // method: "POST",

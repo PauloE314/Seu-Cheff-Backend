@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from recipes.models import Recipe
 from django.contrib.auth.models import User
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, ImageSerializer
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         exclude = ['favorited',]
-        read_only_fields = ('image', )
+        read_only_fields = ('image', 'created_at', 'last_update')
         extra_kwargs = {
             'food_type': {"required":True}
         }
@@ -22,4 +22,23 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         return data
 
+
+
+class UserRecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'recipes', 'image')
+        
+    image = ImageSerializer(read_only=True)
+    recipes = RecipeSerializer(many=True)
     
+
+
+
+    def to_representation(self, instance, *args, **kwargs):
+        data = super().to_representation(instance, *args, **kwargs)
+        
+        for item in data['recipes']:
+            item.pop('author')
+
+        return data

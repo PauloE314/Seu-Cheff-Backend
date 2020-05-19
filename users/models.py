@@ -5,6 +5,7 @@ from django.db.models.signals import post_save, pre_save
 from rest_framework.authtoken.models import Token
 from django.core.mail import send_mail, EmailMessage
 from django.utils.crypto import get_random_string
+from extension.models_methods import exist, delete_file
 
 from receitas_backend.settings import EMAIL_HOST_USER
 
@@ -15,6 +16,26 @@ class ActivationToken(models.Model):
     def __str__(self):
         return self.key
 
+
+class UserImage(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="image")
+    image = models.ImageField(upload_to="users", blank=True)
+
+
+# CREATE IMAGE OBJECT
+@receiver(post_save, sender=User)
+def create_user_image(sender, instance=None, created=None, **kwargs):
+    if created:
+        user_image = UserImage.objects.create(user=instance)
+
+
+# UPDATE IMAGE HANDLER
+@receiver(pre_save, sender=UserImage)
+def handle_update_recipe(sender, instance=None, **kwargs):
+    if exist(instance=instance, model=sender):
+        old_user_image = UserImage.objects.get(pk=instance.pk)
+
+        delete_file(instance=old_user_image, file_name="image")
 
 
 
