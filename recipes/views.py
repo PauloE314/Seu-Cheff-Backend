@@ -15,6 +15,20 @@ class Receipes(class_views.SearchListCreateAPIView):
     searching_fields = ["title", "food_type", "author"]
     searching_models = [("", Recipe)]
 
+    def get_queryset(self, *args, **kwargs):
+        query_params = self.request.query_params
+        queryset = super().get_queryset(*args, **kwargs)
+        
+        # Caso a ordem seja igual a ranking, ordena em função dos favoritos
+        if query_params.get('order') == 'ranking':
+            queryset = sorted(
+                queryset,
+                key=lambda recipe: recipe.favorites,
+                reverse=True
+            )
+        # Retorna o queryset
+        return queryset
+
 
 #RECEITA EM ESPECÍFICO
 class DetailReceipes(generics.RetrieveAPIView):
@@ -25,6 +39,7 @@ class DetailReceipes(generics.RetrieveAPIView):
 #SUAS RECEITAS
 class SelfRecipes(class_views.SearchListCreateAPIView):
     permission_classes = [IsAuthenticated]
+    
     user_relation = 'recipes'
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer

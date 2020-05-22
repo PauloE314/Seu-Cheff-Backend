@@ -8,6 +8,10 @@ Retorna a lista de receitas. Aceita parâmetros para filtrar a pesquisa:
 - ```/recipes/?name=Feijão```
 - ```/recipes/?food_type=Brasileira```
 
+Também aceita a ordenação em função da quantidade de favoritos (por padrão está ordenado do mais novo para o mais velho):
+
+- ```/recipes/?order=ranking```
+
 <hr>
 
 ### **PATH:** ``` /recipes/self/ ``` - GET, POST

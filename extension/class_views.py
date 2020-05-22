@@ -26,7 +26,6 @@ class SearchListAPIView(generics.ListAPIView):
             query_params=self.request.query_params,
             **kwargs
         )
-        print(searched_queryset)
 
         ordinated_queryset = self.ordinate(searched_queryset, *args, **kwargs)
 
