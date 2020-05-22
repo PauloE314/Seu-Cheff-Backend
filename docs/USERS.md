@@ -40,7 +40,7 @@ Ativa um usuário através do Token de ativação enviado para o seu email.
 
 ```json
 {
-    "activation-token": "ASNKMFJA"
+    "activation_token": "ASNKMFJA"
 }
 ```
 
