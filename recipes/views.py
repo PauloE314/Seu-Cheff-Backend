@@ -71,6 +71,9 @@ class DetailSelfRecipes(class_views.SelfRetrieveUpdateDestroyAPIView):
     always_partial = True
 
     def partial_update(self, request, *args, **kwargs):
+        if request.FILES:
+            return Response({'message': 'O upload de imagens deve ser feito em sua URL específica'}, status=status.HTTP_400_BAD_REQUEST)
+
         if request.data.get('author') or request.data.get('favorited'):
             return Response({'message': "Não é possível alterar o autor ou a quantidade de likes diretamente"}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -92,7 +95,7 @@ class SetRecipeImage(class_views.SelfRetrieveUpdateDestroyAPIView):
         if image:
             recipe = self.get_object()
             recipe.image = image
-            recipe.save()
+            recipe.save(update_fields=['image'])
             return Response(RecipeSerializer(recipe).data)
 
         else:

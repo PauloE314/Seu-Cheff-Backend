@@ -11,21 +11,24 @@
     <button id="sub" type="button">Enviar</button>
     
     <script>
-        const token = "e0fdb57d9a13bbe36de1f4032b1ed9819f570bdb";
-        const token_2 = "7e2260c14219f94b3e2b304f5ca3ff4120cfc854";
+        const token = "7e2260c14219f94b3e2b304f5ca3ff4120cfc854";
 
         document.getElementById('sub').onclick = () => {
             const fd = new FormData();
             const image = document.getElementById('image').files[0];
+            console.log(image);
             fd.append('image', image);
 
-            fetch("http://127.0.0.1:8000/users/self/image/", {
-                method: "DELETE",
+            fetch("http://127.0.0.1:8000/recipes/self/4/image/", {
+                method: "PUT",
                 headers: {
                     // "Content-Type": "application/json",
-                    "Authorization": "Token " + token_2
+                    "Authorization": "Token " + token
                 },
-                // body: fd
+                // body: JSON.stringify({
+                //     title:"Receita"
+                // })
+                body: fd
 
 
                 // method: "POST",

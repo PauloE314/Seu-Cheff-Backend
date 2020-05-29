@@ -36,11 +36,15 @@ def check_related(model, field_name):
 # @receiver(pre_delete, sender=Profile)
 def delete_file(instance=None, file_name=None, **kwargs):
     file = getattr(instance, file_name) if file_name else instance.image
+    print("DELETANDO ARQUIVO...")
 
     if file:
+        print("ARQUIVO EXISTE...")
         try:
             os.remove(file.path)
+            print("ARQUIVO ENCONTRADO!")
         except FileNotFoundError:
+            print("ARQUIVO NÃO ENCONTRADO!")
             return False
 
 

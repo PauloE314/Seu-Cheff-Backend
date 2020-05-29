@@ -8,6 +8,8 @@ from django.utils.crypto import get_random_string
 from extension.models_methods import exist, delete_file
 
 from receitas_backend.settings import EMAIL_HOST_USER
+import os
+
 
 class ActivationToken(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="activation_token")
@@ -17,9 +19,15 @@ class ActivationToken(models.Model):
         return self.key
 
 
+def get_upload_path(instance, filename):
+    return os.path.join(
+        f"{instance.user.username}", "user", f"{filename}"
+    ) 
+
+
 class UserImage(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="image")
-    image = models.ImageField(upload_to="users", blank=True)
+    image = models.ImageField(upload_to=get_upload_path, blank=True)
 
 
 # CREATE IMAGE OBJECT
