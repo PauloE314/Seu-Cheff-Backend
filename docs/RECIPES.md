@@ -5,8 +5,8 @@
 #### GET: (Autenticação não necessária)
 
 Retorna a lista de receitas. Aceita parâmetros para filtrar a pesquisa:
-- ```/recipes/?name=Feijão```
-- ```/recipes/?food_type=Brasileira```
+- ```/recipes/?title=Feijão```
+- ```/recipes/?food_type=BR```
 
 Também aceita a ordenação em função da quantidade de favoritos (por padrão está ordenado do mais novo para o mais velho):
 
@@ -19,8 +19,8 @@ Também aceita a ordenação em função da quantidade de favoritos (por padrão
 #### GET: (Autenticação necessária)
 
 Retorna a lista de receitas que o usuário fez. Aceita parâmetros para filtrar a pesquisa:
-- ```/recipes/?name=Feijão```
-- ```/recipes/?food_type=Brasileira```
+- ```/recipes/?title=Feijão```
+- ```/recipes/?food_type=BR```
 
 #### POST: (Autenticação necessária)
 
